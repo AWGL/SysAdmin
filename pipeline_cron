@@ -1,0 +1,35 @@
+#!/bin/sh
+set -euxo pipefail
+
+#Description: shell script to launch bioinformatics analysis pipelines
+#Author:Matt Lyon
+#Date: 28/02/17
+
+function processJobs {
+    echo "checking for jobs in $1 ..."
+
+    for path in $(find "$1" -maxdepth 2 -mindepth 2 -type f -name "RTAComplete.txt" -exec dirname '{}' \;); do
+        
+        #extract run info from path
+        instrumentType=$(dirname "$path")
+        run=$(basename "$path")
+
+        echo "run: $run instrumentType: $instrumentType"
+
+        #move run to archive
+        #mv "$path" /data/archive/"$instrumentType"
+
+        #change access permissions
+        #chgrp -R bi /data/archive/"$instrumentType"/"$run"
+
+        #launch IlluminaQC for demultiplexing and QC
+        #mkdir /data/archive/fastq/"$run"
+        #cd /data/archive/fastq/"$run"
+        #qsub -v sourceDir=/data/archive/"$instrumentType"/"$run" /data/diagnostics/pipelines/IlluminaQC/IlluminaQC-1.0.3/1_IlluminaQC.sh
+
+    done
+
+}
+
+processJobs("/data/temp/miseq")
+processJobs("/data/temp/hiseq")
