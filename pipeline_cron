@@ -1,7 +1,7 @@
 #!/bin/sh
-set -euo pipefail
+set -euxo pipefail
 
-#Description: shell script to launch bioinformatics analysis pipelines
+#Description: shell script to launch bioinformatics analysis pipelines. Run as root cron job
 #Author:Matt Lyon
 #Date: 28/02/17
 
@@ -15,7 +15,7 @@ function processJobs {
         run=$(basename "$path")
 
         #log
-	    echo "path: $path"
+        echo "path: $path"
         echo "run: $run"
         echo "instrumentType: $instrumentType"
 
@@ -24,12 +24,11 @@ function processJobs {
 
         #change access permissions
         chown -R transfer /data/archive/"$instrumentType"/"$run"
-        chgrp -R bi /data/archive/"$instrumentType"/"$run"
+        chgrp -R transfer /data/archive/"$instrumentType"/"$run"
+        chmod -R 774 /data/archive/"$instrumentType"/"$run"
 
         #launch IlluminaQC for demultiplexing and QC
-        mkdir /data/archive/fastq/"$run"
-        cd /data/archive/fastq/"$run"
-        qsub -v sourceDir=/data/archive/"$instrumentType"/"$run" /data/diagnostics/pipelines/IlluminaQC/IlluminaQC-1.0.3/1_IlluminaQC.sh
+        ssh transfer@10.59.210.245 "mkdir /data/archive/fastq/$run && cd /data/archive/fastq/$run && qsub -v sourceDir=/data/archive/$instrumentType/$run /data/diagnostics/pipelines/IlluminaQC/IlluminaQC-1.0.3/1_IlluminaQC.sh"
 
     done
 
