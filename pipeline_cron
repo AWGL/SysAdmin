@@ -1,5 +1,5 @@
 #!/bin/sh
-set -euxo pipefail
+set -euo pipefail
 
 #Description: shell script to launch bioinformatics analysis pipelines
 #Author:Matt Lyon
@@ -9,27 +9,31 @@ function processJobs {
     echo "checking for jobs in $1 ..."
 
     for path in $(find "$1" -maxdepth 2 -mindepth 2 -type f -name "RTAComplete.txt" -exec dirname '{}' \;); do
-        
+
         #extract run info from path
-        instrumentType=$(dirname "$path")
+        instrumentType=$(basename $(dirname "$path"))
         run=$(basename "$path")
 
-        echo "run: $run instrumentType: $instrumentType"
+        #log
+	    echo "path: $path"
+        echo "run: $run"
+        echo "instrumentType: $instrumentType"
 
         #move run to archive
-        #mv "$path" /data/archive/"$instrumentType"
+        mv "$path" /data/archive/"$instrumentType"
 
         #change access permissions
-        #chgrp -R bi /data/archive/"$instrumentType"/"$run"
+        chown -R transfer /data/archive/"$instrumentType"/"$run"
+        chgrp -R bi /data/archive/"$instrumentType"/"$run"
 
         #launch IlluminaQC for demultiplexing and QC
-        #mkdir /data/archive/fastq/"$run"
-        #cd /data/archive/fastq/"$run"
-        #qsub -v sourceDir=/data/archive/"$instrumentType"/"$run" /data/diagnostics/pipelines/IlluminaQC/IlluminaQC-1.0.3/1_IlluminaQC.sh
+        mkdir /data/archive/fastq/"$run"
+        cd /data/archive/fastq/"$run"
+        qsub -v sourceDir=/data/archive/"$instrumentType"/"$run" /data/diagnostics/pipelines/IlluminaQC/IlluminaQC-1.0.3/1_IlluminaQC.sh
 
     done
 
 }
 
-processJobs("/data/temp/miseq")
-processJobs("/data/temp/hiseq")
+#processJobs "/data/temp/miseq"
+processJobs "/data/temp/hiseq"
