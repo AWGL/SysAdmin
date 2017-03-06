@@ -25,7 +25,7 @@ function processJobs {
         #change access permissions
         chown -R transfer /data/archive/"$instrumentType"/"$run"
         chgrp -R transfer /data/archive/"$instrumentType"/"$run"
-        chmod -R 774 /data/archive/"$instrumentType"/"$run"
+        chmod -R 744 /data/archive/"$instrumentType"/"$run"
 
         #launch IlluminaQC for demultiplexing and QC
         ssh transfer@10.59.210.245 "mkdir /data/archive/fastq/$run && cd /data/archive/fastq/$run && qsub -v sourceDir=/data/archive/$instrumentType/$run /data/diagnostics/pipelines/IlluminaQC/IlluminaQC-1.0.3/1_IlluminaQC.sh"
