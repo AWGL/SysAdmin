@@ -1,5 +1,5 @@
 #!/bin/sh
-set -euxo pipefail
+set -euo pipefail
 
 #Description: shell script to launch bioinformatics analysis pipelines. Run as root cron job
 #Author:Matt Lyon
@@ -15,7 +15,7 @@ function processJobs {
         run=$(basename "$path")
 
         #log
-        echo "path: $path"
+	    echo "path: $path"
         echo "run: $run"
         echo "instrumentType: $instrumentType"
 
@@ -35,4 +35,4 @@ function processJobs {
 }
 
 #processJobs "/data/temp/miseq"
-processJobs "/data/temp/hiseq"
+#processJobs "/data/temp/hiseq"
